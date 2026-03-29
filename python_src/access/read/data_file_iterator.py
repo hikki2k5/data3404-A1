@@ -49,6 +49,17 @@ class DataFileIterator(AccessIterator, ABC):
         """Get the data page for the given page ID."""
         pass
 
+    def __iter__(self):
+        """Return self as iterator."""
+        return self
+
+    def __next__(self) -> Tuple:
+        """Get the next tuple."""
+        if not self.has_next():
+            raise StopIteration()
+
+        return self.page_iterator.__next__()
+
     def has_next(self) -> bool:
         """Check if there is a next tuple."""
         if self.page_iterator is None:
@@ -66,17 +77,6 @@ class DataFileIterator(AccessIterator, ABC):
                 return False
         
         return False
-
-    def __next__(self) -> Tuple:
-        """Get the next tuple."""
-        if not self.has_next():
-            raise StopIteration()
-
-        return self.page_iterator.__next__()
-
-    def __iter__(self):
-        """Return self as iterator."""
-        return self
 
     def get_schema(self) -> TupleDesc:
         """Get the schema of tuples."""

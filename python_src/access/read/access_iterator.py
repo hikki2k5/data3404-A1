@@ -9,12 +9,26 @@ from python_src.heap.tuple_desc import TupleDesc
 from python_src.buffer.buffer_manager import BufferAccessException
 
 
+class UnsupportedOperationError(Exception):
+    """Raised when trying to execute an unsupported operation on an iterator."""
+    pass
+
+
 class AccessIterator(ABC, Iterator):
     """Generic Iterator Class for database access patterns."""
 
+    def __iter__(self):
+        """Return the iterator object itself to support Python iterable."""
+        return self
+
     @abstractmethod
-    def close(self) -> None:
-        """Close the iterator and release resources."""
+    def __next__(self) -> Tuple:
+        """Get the next tuple to support Python iterable."""
+        pass
+
+    @abstractmethod
+    def has_next(self) -> bool:
+        """Check if there is a next element."""
         pass
 
     @abstractmethod
@@ -22,9 +36,10 @@ class AccessIterator(ABC, Iterator):
         """Get the schema of tuples produced by this iterator."""
         pass
 
-    def remove(self) -> None:
-        """Remove operation is not supported."""
-        raise UnsupportedOperationError()
+    @abstractmethod
+    def close(self) -> None:
+        """Close the iterator and release resources."""
+        pass
 
     @abstractmethod
     def mark(self) -> None:
@@ -34,14 +49,4 @@ class AccessIterator(ABC, Iterator):
     @abstractmethod
     def reset(self) -> None:
         """Return to previously marked position."""
-        pass
-
-    @abstractmethod
-    def __has_next__(self) -> bool:
-        """Check if there is a next element."""
-        pass
-
-    @abstractmethod
-    def __next__(self) -> Tuple:
-        """Get the next tuple."""
         pass
