@@ -86,7 +86,7 @@ class HeaderPage(Page):
             num_records = hpage.get_num_pointers()
             for i in range(num_records):
                 entry_name = hpage.get_file_entry(i, temp_page_id)
-                if entry_name == entry and temp_page_id.is_valid():
+                if entry_name.capitalize() == entry.capitalize() and temp_page_id.is_valid():
                     buffer_manager.unpin(current_page_id, False)
                     return temp_page_id
             

@@ -13,7 +13,7 @@ class TupleDescItem:
     def __init__(self, field_type: Type, name: str):
         """Initialize a TupleDescItem."""
         self.type = field_type
-        self.name = name
+        self.name = name.lower()  # Store names in lowercase for case-insensitive matching
 
     def get_name(self) -> str:
         """Get the field name."""
@@ -70,7 +70,7 @@ class TupleDesc:
 
     def has_field(self, name: str) -> bool:
         """Check if a field with the given name exists."""
-        return any(item.get_name() == name for item in self.columns)
+        return any(item.get_name() == name.lower() for item in self.columns)
 
     def get_field_type(self, i: int) -> Type:
         """Get the type of the field at position i."""
@@ -80,18 +80,28 @@ class TupleDesc:
 
     def get_field_type_by_name(self, name: str) -> Type:
         """Get the type of the field with the given name."""
-        return self.get_field_type(self.get_index_from_name(name))
+        return self.get_field_type(self.get_index_from_name(name.lower()))
 
     def get_index_from_name(self, field_name: str) -> int:
         """Get the position of the column with the given name."""
         for i, item in enumerate(self.columns):
-            if item.get_name() == field_name:
+            if item.get_name() == field_name.lower():
                 return i
         raise KeyError(f"Field '{field_name}' not found in schema")
 
     def get_column_names(self) -> List[str]:
         """Get a list of column names in the schema."""
         return [item.get_name() for item in self.columns]
+    
+    def str(self) -> str:
+        """return the tuple schema as a readable string."""
+        retval = "("
+        for item in self.columns:
+            retval += (f"{item.get_name()}: {item.get_type()}")
+            if item != self.columns[-1]:
+                retval += ", "
+        retval += ")"
+        return retval
 
     @staticmethod
     def join(left: 'TupleDesc', right: 'TupleDesc') -> 'TupleDesc':

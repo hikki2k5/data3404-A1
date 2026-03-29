@@ -3,6 +3,7 @@ Query Engine - REPL for executing queries.
 """
 
 import time
+import readline  # just by importing improves input() to support editing and history
 from simpledb.main.database_manager import DatabaseManager
 from simpledb.parser.query import Query
 from simpledb.executor.projection.projection import Projection
@@ -17,7 +18,13 @@ class QueryEngine:
         self.dbms = dbms
 
     def run(self) -> None:
-        """Run the query engine REPL (read-eval-print loop)."""
+        """
+        Run the query engine's read-eval-print loop (REPL):
+         - Loops over input read in from the user, validating the correctness 
+           and calling execute on valid SQL queries
+         - Exits once "quit" or "exit" is called
+         - Shows schema of available tables on command "schema" or "tables"
+        """
         print("SimpleDB Query Engine")
         print("Type 'quit' to exit")
         print()
@@ -25,8 +32,11 @@ class QueryEngine:
         while True:
             try:
                 command = input("SQL> ").strip()
-                if command.lower() == 'quit':
+                if command.lower() == 'quit' or command.lower() == 'exit':
                     break
+                if command.lower() == 'schema' or command.lower() == 'tables':
+                    self.dbms.get_catalog().print_schemas()
+                    continue
                 if not command:
                     continue
                 
@@ -43,7 +53,7 @@ class QueryEngine:
             print("Invalid query syntax")
             return
         
-        error = query.validate(self.dbms)
+        error = query.validate(self.dbms.get_catalog())
         if error:
             print(f"Validation Error: {error}")
             return

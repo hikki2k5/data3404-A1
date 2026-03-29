@@ -63,8 +63,8 @@ This starts an interactive query engine where you can:
 
 Example queries:
 ```sql
-SELECT name, age FROM students;
-SELECT name, tutor FROM students JOIN tutors ON class = id;
+SELECT name, age   FROM Students;
+SELECT name, tutor FROM Students JOIN Tutors ON class = id;
 ```
 
 ## Running Tests

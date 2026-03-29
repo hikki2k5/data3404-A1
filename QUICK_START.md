@@ -42,22 +42,22 @@ SQL>
 
 **1. Simple SELECT:**
 ```sql
-SELECT name, age FROM students;
+SELECT name, age FROM Students;
 ```
 
 **2. SELECT with projection:**
 ```sql
-SELECT name, class FROM students;
+SELECT name, class FROM Students;
 ```
 
 **3. JOIN query:**
 ```sql
-SELECT name, tutor FROM students JOIN tutors ON class = id;
+SELECT name, tutor FROM Students JOIN Tutors ON class = id;
 ```
 
 **4. Full command with semicolon:**
 ```sql
-SELECT name, age, class FROM students;
+SELECT name, age, class FROM Students;
 ```
 
 ## Running Tests
@@ -72,7 +72,7 @@ python3 -B -m unittest discover -s tests -p "test_*.py" -v 2>&1
 Or with pytest:
 
 ```bash
-pytest tests/test_parser/test_query.py -v
+pytest tests/test_main/test_database_manager.py -v
 ```
 
 ## Module Overview

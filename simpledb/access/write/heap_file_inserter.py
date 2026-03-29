@@ -19,6 +19,10 @@ class HeapFileInserter(AccessInserter):
         self.schema = schema
         self.current_page_id = PageId(first_page_id.get())
 
+    def get_schema(self) -> TupleDesc:
+        """Get the schema of tuples."""
+        return self.schema
+
     def insert(self, row: list) -> None:
         """Insert a row into the heap file."""
         tuple_obj = Tuple(self.schema, row)

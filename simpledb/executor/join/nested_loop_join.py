@@ -5,6 +5,7 @@ Nested Loop Join algorithm.
 from simpledb.executor.join.abstract_join import AbstractJoin
 from simpledb.access.read.access_iterator import AccessIterator
 from simpledb.buffer.buffer_manager import BufferAccessException
+from simpledb.access.read.access_iterator import UnsupportedOperationError
 from simpledb.heap.tuple import Tuple
 
 

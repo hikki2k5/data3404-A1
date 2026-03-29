@@ -47,14 +47,14 @@ def main():
     # Create Test Schema for students
     student_schema = TupleDesc()
     student_schema.add_string("name").add_integer("age").add_string("class").add_boolean("male")
-    dbms.get_catalog().add_schema(student_schema, "students")
-    students = dbms.get_heap_file("students")
+    dbms.get_catalog().add_schema(student_schema, "Students")
+    students = dbms.get_heap_file("Students")
     
     # Create Test Schema for tutors
     tutor_schema = TupleDesc()
     tutor_schema.add_string("id").add_string("tutor")
-    dbms.get_catalog().add_schema(tutor_schema, "tutors")
-    tutors = dbms.get_heap_file("tutors")
+    dbms.get_catalog().add_schema(tutor_schema, "Tutors")
+    tutors = dbms.get_heap_file("Tutors")
     
     # Insert rows (only if db file without data yet)
     if students.is_empty():

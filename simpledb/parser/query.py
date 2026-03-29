@@ -17,11 +17,11 @@ class Query:
         self.join_args = join_args
 
     def get_projected_columns(self) -> List[str]:
-        """Get the columns to project."""
+        """Get the columns to project from the query."""
         return self.projected_columns
 
     def get_table_name(self) -> str:
-        """Get the table name."""
+        """Get the table name from the query."""
         return self.table_name
 
     def has_join_arguments(self) -> bool:
@@ -32,12 +32,12 @@ class Query:
         """Get the join arguments."""
         return self.join_args
 
-    def validate(self, dbms) -> str:
+    def validate(self, catalog) -> str:
         """Validate the query against the database schema."""
-        schema = dbms.get_catalog().read_schema(self.table_name)
+        schema = catalog.read_schema(self.table_name)
         if schema is None:
-            return "Invalid Schema"
-        
+            return f"Invalid Schema: {self.table_name}"
+            
         schema_columns = schema.get_column_names()
         
         if not self.has_join_arguments():
@@ -48,9 +48,9 @@ class Query:
             return None
         
         # Join query
-        join_schema = dbms.get_catalog().read_schema(self.join_args.get_join_table())
+        join_schema = catalog.read_schema(self.join_args.get_join_table())
         if join_schema is None:
-            return "Invalid Schema"
+            return f"Invalid Join-Table {self.join_args.get_join_table()}"
         
         join_schema_columns = join_schema.get_column_names()
         
@@ -59,9 +59,9 @@ class Query:
             in_right = column in join_schema_columns
             
             if not in_left and not in_right:
-                return f"Invalid Column: {column}"
+                return f"Invalid Join Column: {column}"
             if in_left and in_right:
-                return f"Ambiguous Column: {column}"
+                return f"Ambiguous Join Column: {column}"
         
         if self.join_args.get_left_column() not in schema_columns:
             return "Join condition columns cannot be found in the schema"
@@ -76,21 +76,22 @@ class Query:
         
         return None
 
+
     @staticmethod
     def generate_query(command: str):
         """Parse a query from a string."""
         pattern = r"SELECT ([\w, ]+)\s+FROM (\w+)(\s+JOIN (\w+)\s+ON (\w+)\s*=\s*(\w+))?;?"
-        match = re.match(pattern, command.strip())
+        match = re.match(pattern, command.strip(), re.IGNORECASE)
         
         if not match:
             return None
         
         table_name = match.group(2)
-        projected_columns = [col.strip() for col in match.group(1).split(',')]
+        projected_columns = [col.strip().lower() for col in match.group(1).split(',')]
         
         join_args = None
         if match.group(3):  # Has JOIN
-            join_args = JoinArgs(match.group(4), match.group(5), match.group(6))
+            join_args = JoinArgs(match.group(4), match.group(5).lower(), match.group(6).lower())
         
         return Query(table_name, projected_columns, join_args)
 
