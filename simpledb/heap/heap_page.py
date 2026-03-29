@@ -4,7 +4,7 @@ Heap Page class representing a page full of records.
 
 from simpledb.disk.data_page import DataPage
 from simpledb.disk.page import Page
-from simpledb.heap.tuple_desc import TupleDesc
+from simpledb.main.catalog.tuple_desc import TupleDesc
 
 
 class HeapPage(DataPage):
@@ -12,7 +12,7 @@ class HeapPage(DataPage):
 
     def __init__(self, page: Page, schema: TupleDesc):
         """Initialize a HeapPage."""
-        self.data = bytearray(page.get_data())
+        self.data = page.get_data()
         self.schema = schema
 
     def iterator(self):

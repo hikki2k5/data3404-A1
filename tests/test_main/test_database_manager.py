@@ -16,7 +16,7 @@ class TestDatabaseManager(unittest.TestCase):
     def setUp(self):
         """Set up test database."""
         self.db_name = tempfile.mktemp(suffix='.db')
-        self.dbms = DatabaseManager(self.db_name)
+        self.dbms = DatabaseManager()
 
     def tearDown(self):
         """Clean up test database."""

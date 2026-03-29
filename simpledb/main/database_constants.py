@@ -4,7 +4,7 @@ Database constants definition.
 
 class DatabaseConstants:
     """Static constants for the database."""
-    DEFAULT_DB_NAME = "info3404_database"
+    DEFAULT_DB_NAME = "data3404_database.db"
     PAGE_SIZE = 1024
     INVALID_PAGE_ID = -1
     FIRST_PAGE_ID = 0

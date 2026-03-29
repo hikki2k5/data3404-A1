@@ -7,8 +7,6 @@ from simpledb.main.database_manager import DatabaseManager
 from simpledb.parser.query import Query
 from simpledb.executor.projection.projection import Projection
 from simpledb.executor.join.nested_loop_join import NestedLoopJoin
-from simpledb.executor.join.block_nested_loop_join import BlockNestedLoopJoin
-from simpledb.executor.join.sort_merge_join import SortMergeJoin
 
 
 class QueryEngine:

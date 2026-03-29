@@ -1,5 +1,5 @@
 """
-Page class representing a 1KB page in the database.
+Page class representing a PAGE_SIZE page in the database.
 """
 
 import struct
@@ -8,6 +8,7 @@ from simpledb.main.database_constants import DatabaseConstants
 
 class Page:
     """Represents a page in the database."""
+    """self.data  stores the page's actual data as bytearray"""
 
     def __init__(self, data: bytes = None):
         """Create a new page, optionally with the given data."""
@@ -16,15 +17,15 @@ class Page:
         else:
             self.set_data(data)
 
-    def set_data(self, data: bytes) -> None:
+    def set_data(self, data: bytearray) -> None:
         """SetterI for the data byte array."""
         if len(data) != DatabaseConstants.PAGE_SIZE:
             raise AssertionError(f"Data length {len(data)} != PAGE_SIZE {DatabaseConstants.PAGE_SIZE}")
-        self.data = bytearray(data)
+        self.data = data
 
-    def get_data(self) -> bytes:
+    def get_data(self) -> bytearray:
         """Get the data byte array."""
-        return bytes(self.data)
+        return self.data
 
     def copy(self, other: 'Page') -> None:
         """Copy the contents of another page into this one."""

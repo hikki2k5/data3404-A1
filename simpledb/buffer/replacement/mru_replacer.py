@@ -34,4 +34,4 @@ class MruReplacer(Replacer):
     def notify(self, pool: List[BufferFrame], frame: BufferFrame) -> None:
         """Update the replacement policy when a frame is accessed."""
         # Increment clock count for accessed frame to mark it as more recently used
-        frame.set_clock_count(frame.get_clock_count() + 1)
+        #frame.set_clock_count(frame.get_clock_count() + 1)
