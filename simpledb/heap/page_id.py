@@ -8,7 +8,8 @@ from simpledb.main.database_constants import DatabaseConstants
 
 class PageId:
     """Represents a page ID that identifies a page on disk."""
-
+    SIZE = 4  # Size in bytes to store a page ID (integer)
+    
     def __init__(self, page_id: int = None):
         """Initialize a PageId."""
         if page_id is None:

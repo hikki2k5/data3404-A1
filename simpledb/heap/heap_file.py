@@ -24,10 +24,10 @@ class HeapFile:
         
         if relation_name is not None and buffer_manager is not None:
             # Persistent HeapFile
-            self.first_page_id = HeaderPage.get_file_entry_static(buffer_manager, relation_name)
+            self.first_page_id = HeaderPage.find_catalog_entry(buffer_manager, relation_name)
             if not self.first_page_id.is_valid():
                 self.first_page_id = buffer_manager.get_new_page()
-                HeaderPage.set_file_entry_static(buffer_manager, relation_name, self.first_page_id)
+                HeaderPage.insert_catalog_entry(buffer_manager, relation_name, self.first_page_id)
                 first_page = HeapPage(buffer_manager.get_page(self.first_page_id), schema)
                 first_page.initialise(relation_name)
                 buffer_manager.unpin(self.first_page_id, True)
@@ -44,12 +44,12 @@ class HeapFile:
     def iterator(self):
         """Get an iterator over tuples in this file."""
         from simpledb.access.read.heap_file_iterator import HeapFileIterator
-        return HeapFileIterator(self.first_page_id, self.buffer, self.schema)
+        return HeapFileIterator(self.buffer, self.first_page_id, self.schema)
 
     def inserter(self):
         """Get an inserter for this file."""
         from simpledb.access.write.heap_file_inserter import HeapFileInserter
-        return HeapFileInserter(self.first_page_id, self.buffer, self.schema)
+        return HeapFileInserter(self.buffer, self.first_page_id, self.schema)
 
     def get_schema(self) -> TupleDesc:
         """Get the schema of this heap file."""

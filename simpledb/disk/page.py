@@ -7,7 +7,7 @@ from simpledb.main.database_constants import DatabaseConstants
 
 
 class Page:
-    """Represents a page in the database."""
+    """Represents a raw page in the database."""
     """self.data  stores the page's actual data as bytearray"""
 
     def __init__(self, data: bytes = None):
@@ -68,3 +68,11 @@ class Page:
     def set_integer_value(self, value: int, offset: int) -> None:
         """Set the integer value at the offset."""
         struct.pack_into('>i', self.data, offset, value)
+
+    def get_short_value(self, offset: int) -> int:
+        """Get the short value at the offset."""
+        return struct.unpack_from('>H', self.data, offset)[0]
+
+    def set_short_value(self, value: int, offset: int) -> None:
+        """Set the short value at the offset."""
+        struct.pack_into('>H', self.data, offset, value)

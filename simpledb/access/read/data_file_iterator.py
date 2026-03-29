@@ -14,35 +14,37 @@ from simpledb.disk.data_page import DataPage
 class DataFileIterator(AccessIterator, ABC):
     """Iterator to traverse a file collection of data pages."""
 
-    def __init__(self, data_file_page: PageId, buffer_manager: BufferManager, schema: TupleDesc):
+    def __init__(self, buffer_manager: BufferManager, data_file_page: PageId, schema: TupleDesc):
         """Initialize the DataFileIterator."""
         self.buffer_manager = buffer_manager
         self.schema = schema
         self.current_page_id = PageId(data_file_page.get())
-        self.marked_page_id = PageId(data_file_page.get())
-        self.page_iterator = None
+        self.marked_page_id  = None
+        self.marked_slot     = None
+        self.page_iterator   = None
         self.current_data_page = None
         
         try:
             self._advance_to_next_page()
+            self.mark()
         except BufferAccessException:
             pass
 
-    def _advance_to_next_page(self) -> None:
+    def _advance_to_next_page(self, reset_to_mark: bool = False) -> None:
         """Advance to the next page."""
         if self.current_data_page is not None:
+            next_page_id = self.current_data_page.get_next_page()
             self.buffer_manager.unpin(self.current_page_id, False)
+            if reset_to_mark:
+                self.current_page_id = self.marked_page_id
+            elif next_page_id.is_valid():
+                self.current_page_id = next_page_id
+            else:
+                self.page_iterator = None
+                return
         
-        if not self.current_page_id.is_valid():
-            self.page_iterator = None
-            return
-        
-        page = self.buffer_manager.get_page(self.current_page_id)
         self.current_data_page = self.get_data_page(self.current_page_id)
         self.page_iterator = self.current_data_page.iterator()
-        
-        # Get next page
-        self.current_page_id = self.current_data_page.get_next_page_id()
 
     @abstractmethod
     def get_data_page(self, page_id: PageId) -> DataPage:
@@ -95,10 +97,12 @@ class DataFileIterator(AccessIterator, ABC):
 
     def reset(self) -> None:
         """Reset to the marked position."""
-        self.current_page_id = PageId(self.marked_page_id.get())
-        try:
-            self._advance_to_next_page()
-            if hasattr(self, 'marked_slot') and self.page_iterator is not None:
-                self.page_iterator.set_slot(self.marked_slot)
-        except BufferAccessException:
-            pass
+        if self.marked_page_id is not None:
+            try:
+                self._advance_to_next_page(True)
+                if self.page_iterator is not None:
+                    self.page_iterator.set_slot(self.marked_slot)
+            except BufferAccessException:
+                pass
+        else:
+            raise RuntimeError()
