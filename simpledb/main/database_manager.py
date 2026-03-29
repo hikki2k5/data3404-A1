@@ -21,33 +21,27 @@ class ComponentsNotInitialisedError(Exception):
 class DatabaseManager:
     """Database Components are initialised and stored in this class."""
 
-    def __init__(self):
+    def __init__(self, db_filename: str = DatabaseConstants.DEFAULT_DB_NAME, buffer_frames: int = DatabaseConstants.MAX_BUFFER_FRAMES):
         """Initialize the DatabaseManager."""
         self.is_initialised = False
         self.dm = None
         self.bm = None
         self.catalog = None
         self._temp_file = None
-        self._initialise_components()
+        self._initialise_components(db_filename, buffer_frames)
 
-    def _initialise_components(self) -> None:
+    def _initialise_components(self, db_filename: str, buffer_frames: int) -> None:
         """Initialize database components."""
         if not self.is_initialised:
             try:
-                # Create temporary file for database
-                self._temp_file = tempfile.NamedTemporaryFile(
-                    prefix=DatabaseConstants.DEFAULT_DB_NAME,
-                    suffix='.tmp',
-                    delete=False
-                )
-                self._temp_file.close()  # Close so DiskManager can open it
-
                 # Initialize DiskManager
-                self.dm = DiskManager(DatabaseConstants.DEFAULT_DB_NAME, 1)
+                self.dm = DiskManager(db_filename, 1, self._temp_file)
 
                 # Initialize BufferManager with Random replacer
+                if ( buffer_frames < 3):
+                    raise ValueError("Buffer frames must be at least 3.")
                 self.bm = BufferManager(
-                    DatabaseConstants.MAX_BUFFER_FRAMES,
+                    buffer_frames,
                     RandomReplacer(),
                     self.dm
                 )

@@ -3,9 +3,10 @@ Demo for the SimpleDB Database System.
 """
 
 from simpledb.main.database_manager import DatabaseManager
+from simpledb.main.database_constants import DatabaseConstants
 from simpledb.executor.query_engine import QueryEngine
 from simpledb.main.catalog.tuple_desc import TupleDesc
-
+import argparse
 
 STUDENT_ROWS_SMALL = [
     ["Michael", 19, "INFO1103", True],
@@ -30,8 +31,18 @@ def insert_rows(table, rows):
 
 
 def main():
+    """Process command-line argument"""
+    argparser = argparse.ArgumentParser(description="SydDB demo")
+    argparser.add_argument("-d", "--dbfile", metavar="FILNAME", help="name of database file",   default=DatabaseConstants.DEFAULT_DB_NAME,   type=str)
+    argparser.add_argument("-b", "--buffer", metavar="SIZE", help="number of buffer frames", default=DatabaseConstants.MAX_BUFFER_FRAMES, type=int)
+    args = argparser.parse_args()
+
     """Run the demo."""
-    dbms = DatabaseManager()
+    try:
+        dbms = DatabaseManager(args.dbfile, args.buffer)
+    except Exception as e:
+        print(f"Error initializing DBMS: {e}")
+        return  
     
     # Create Test Schema for students
     student_schema = TupleDesc()
@@ -45,9 +56,11 @@ def main():
     dbms.get_catalog().add_schema(tutor_schema, "tutors")
     tutors = dbms.get_heap_file("tutors")
     
-    # Insert rows
-    insert_rows(students, STUDENT_ROWS_SMALL)
-    insert_rows(tutors, TUTOR_ROWS_SMALL)
+    # Insert rows (only if db file without data yet)
+    if students.is_empty():
+        insert_rows(students, STUDENT_ROWS_SMALL)
+    if tutors.is_empty():
+        insert_rows(tutors, TUTOR_ROWS_SMALL)
     
     # Run query engine
     query_engine = QueryEngine(dbms)

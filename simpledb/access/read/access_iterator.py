@@ -6,7 +6,6 @@ from abc import ABC, abstractmethod
 from typing import Iterator
 from simpledb.heap.tuple import Tuple
 from simpledb.main.catalog.tuple_desc import TupleDesc
-from simpledb.buffer.buffer_manager import BufferAccessException
 
 
 class UnsupportedOperationError(Exception):

@@ -12,15 +12,18 @@ from simpledb.disk.header_page import HeaderPage
 class DiskManager:
     """Manages access to the disk."""
 
-    def __init__(self, db_name: str, num_pages: int = 1):
+    def __init__(self, db_name: str, num_pages: int = 1, tmp_file = None):
         """Open/create a database with the given name."""
         self.db_name = db_name
         self.num_pages = 0
         self.page_accesses = 0
 
-        # Check if file exists
-        file_exists = os.path.exists(db_name)
-        self.db_file = open(db_name, 'r+b' if file_exists else 'w+b')
+        # Check if file exists or is already opened as temp file
+        if tmp_file is not None:
+            self.db_file = tmp_file
+        else:
+            file_exists = os.path.exists(db_name)
+            self.db_file = open(db_name, 'r+b' if file_exists else 'w+b')
         
         self._initialise(num_pages)
 

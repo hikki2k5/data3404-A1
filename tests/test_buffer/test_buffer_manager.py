@@ -17,7 +17,7 @@ class TestBufferManager(unittest.TestCase):
     def setUp(self):
         """Set up test buffer manager with temp database."""
         self.fd, self.db_name = tempfile.mkstemp(suffix='.db')
-        self.disk_manager = DiskManager(self.db_name, num_pages=10)
+        self.disk_manager = DiskManager(self.db_name, num_pages=10, tmp_file=os.fdopen(self.fd, 'r+b'))
         self.replacer = RandomReplacer()
         self.buffer_manager = BufferManager(max_frames=3, replacer=self.replacer, disk_manager=self.disk_manager)
 
