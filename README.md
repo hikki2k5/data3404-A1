@@ -2,7 +2,7 @@
 README for the Python conversion of USYD JavaDB to SimpleDB.
 """
 
-# SimpleDB - Python Version
+# SimpleDB - Python Database Engine
 
 This is a complete Python conversion of the original Java database join algorithms project for teaching DATA3404 at the University of Sydney.
 
@@ -21,6 +21,7 @@ simpledb/
     ├── projection/         # Column projection
     ├── join/               # Join algorithm implementations
     ├── filter/             # Filter operator implementing WHERE clause
+    ├── ordering/           # OrderBy operator implementing ORDER BY clause
     └── limit/              # Limit operator imlementing LIMIT clause
 └── run/                    # Demo application
 

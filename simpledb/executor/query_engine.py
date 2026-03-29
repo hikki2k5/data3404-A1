@@ -8,6 +8,7 @@ from simpledb.main.database_manager import DatabaseManager
 from simpledb.parser.query import Query
 from simpledb.executor.projection.projection import Projection
 from simpledb.executor.limit.limit import Limit
+from simpledb.executor.ordering import InMemoryOrderBy
 from simpledb.executor.filter.filter import Filter
 from simpledb.executor.filter.equals import Equals
 from simpledb.executor.filter.range import GreaterThanEquals, GreaterThan, LessThanEquals, LessThan
@@ -31,7 +32,7 @@ class QueryEngine:
     * It will then wrap this iterator in a filter for both (age > 10), and another filter for (age < 20)
     * Finally it will project out the columns from this filtered iterator (creating a new TupleDesc to represent them)
     """
-    
+
     def __init__(self, dbms: DatabaseManager):
         """Initialize the QueryEngine."""
         self.dbms = dbms
@@ -39,8 +40,7 @@ class QueryEngine:
     def run(self) -> None:
         """
         Run the query engine's read-eval-print loop (REPL):
-         - Loops over input read in from the user, validating the correctness 
-           and calling execute on valid SQL queries
+         - Loops over input read in from the user, validating the correctness and calling execute on valid queries
          - Exits once "quit" or "exit" is called
          - Shows schema of available tables on command "schema" or "tables"
         """
@@ -98,6 +98,10 @@ class QueryEngine:
             if query.has_filter_arguments():
                 for filter_args in query.get_filter_args():
                     result_iterator = QueryEngine.filter_where(result_iterator, filter_args)
+
+            # Handle the order by clause
+            if query.has_orderby_clause():
+                result_iterator = InMemoryOrderBy(result_iterator, query.get_orderby_columns())
 
             # Apply projection if needed
             if query.get_projected_columns():
