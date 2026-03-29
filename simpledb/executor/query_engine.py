@@ -55,7 +55,7 @@ class QueryEngine:
         
         error = query.validate(self.dbms.get_catalog())
         if error:
-            print(f"Validation Error: {error}")
+            print(f"Query Validation Error: {error}")
             return
         
         start_time = time.time()
