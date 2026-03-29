@@ -18,21 +18,15 @@ class InMemoryOrderBy(AccessIterator):
     def __init__(self, child_iter: AccessIterator, columns):
         """
         Constructor for the in-memory OrderBy sort iterator
-         - We will need to sort the tuples in the constructor
-         - Look at using `new ColumnComparator(columns)` and Collections.sort(...)
+         - We will materialize and sort the tuples in the first call to __next__()
          @param child_iter  iterator over the rows to sort
          @param columns     the columns to sort on
         """
+        self.input  = child_iter
         self.schema = child_iter.get_schema()
-        self.tuples = []
-        self.index = 0
-
-        # materialize all tuples from child and sort in memory
-        while child_iter.has_next():
-            self.tuples.append(child_iter.__next__())
-
-        self.tuples.sort(key=cmp_to_key(ColumnComparator(columns).compare))
-        child_iter.close()
+        self.columns= columns
+        self.tuples = None
+        self.index  = 0
 
     def close(self):
         self.tuples.clear()
@@ -41,11 +35,23 @@ class InMemoryOrderBy(AccessIterator):
         return self.schema
 
     def has_next(self) -> bool:
-        return self.index < len(self.tuples)
+        if self.tuples is None: # check whether we materialized input yet
+            return self.input.has_next()
+        else:
+            return self.index < len(self.tuples)
 
     def __next__(self):
         if not self.has_next():
             raise StopIteration()
+
+        # materialize all tuples from child and sort in memory
+        if self.tuples is None:
+            self.tuples = []
+            while self.input.has_next():
+                self.tuples.append(self.input.__next__())
+            self.tuples.sort(key=cmp_to_key(ColumnComparator(self.columns).compare))
+            self.input.close()
+
         tuple_obj = self.tuples[self.index]
         self.index += 1
         return tuple_obj
