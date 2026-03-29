@@ -1,1 +1,0 @@
-# Join Algorithm Python Project

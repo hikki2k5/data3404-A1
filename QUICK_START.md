@@ -1,5 +1,5 @@
 """
-QUICK START GUIDE - Python Join Algorithms Database
+QUICK START GUIDE - Python SimpleDB Database
 """
 
 # Quick Start Guide
@@ -15,20 +15,20 @@ python3 --version
 ## Step 2: Navigate to Project
 
 ```bash
-cd "python_src"
+cd "SimpleDB"
 ```
 
 ## Step 3: Run the Demo
 
 ```bash
-python3 ../python_src/demo/demo.py
+python3 -B -m simpledb.run.demo
 ```
 
 You should see:
-```
-Join Algorithm Query Engine
-Type 'quit' to exit
 
+```bash
+SimpleDB Query Engine
+Type 'quit' to exit
 SQL>
 ```
 
@@ -62,39 +62,40 @@ SELECT name, age, class FROM students;
 
 ## Running Tests
 
-In the `python_test/` directory:
+In the `tests/` directory:
 
 ```bash
-cd ../python_test
-python3 -m unittest test_basic.py -v
+cd tests
+python3 -B -m unittest discover -s tests -p "test_*.py" -v 2>&1
 ```
 
 Or with pytest:
 
 ```bash
-pytest test_basic.py -v
+pytest tests/test_parser/test_query.py -v
 ```
 
 ## Module Overview
 
 | Module | Purpose |
 |--------|---------|
-| `global_module/` | Type system, constants, database manager |
+| `main/` | Global constants, database manager |
+| `main/catalog` | Type system, schema |
 | `heap/` | Tuple representation and heap file management |
 | `disk/` | Disk manager and page I/O |
 | `buffer/` | Buffer pool with MRU replacement |
 | `access/` | Record access (read/write iterators) |
-| `join/` | Join algorithm implementations |
 | `parser/` | SQL query parsing |
-| `execution/` | Query engine with REPL |
+| `executor/` | Query engine with REPL |
+| `executor/join/` | Join algorithm implementations |
 
 ## Creating Custom Queries
 
 To use the database programmatically:
 
 ```python
-from python_src.global_module.database_manager import DatabaseManager
-from python_src.heap.tuple_desc import TupleDesc
+from simpledb.main.database_manager import DatabaseManager
+from simpledb.main.catalog.tuple_desc import TupleDesc
 
 # Initialize database
 dbms = DatabaseManager()
@@ -122,8 +123,8 @@ for tuple_obj in table.iterator():
 ### Issue: Module not found
 **Solution**: Make sure you're running from the correct directory
 ```bash
-cd "/path/to/Join-Algorithms"
-python3 python_src/demo/demo.py
+cd "/path/to/SimpleDB"
+python3 -B -m simpledb.run.demo
 ```
 
 ### Issue: Query syntax error
@@ -140,7 +141,7 @@ SELECT col1, col2 FROM table [JOIN table2 ON col1 = col2];
 ## Performance Tips
 
 1. **Buffer Pool**: Configured with 32 frames - adjust in `database_constants.py`
-2. **Block Size**: For BlockNestedLoopJoin, adjust block frames:
+2. **Block Size**: For NestedLoopJoin, adjust block frames:
    ```python
    NestedLoopJoin(left, right, condition, block_size=4)
    ```
@@ -151,12 +152,10 @@ SELECT col1, col2 FROM table [JOIN table2 ON col1 = col2];
 
 ```
 Join-Algorithms/
-├── python_src/           # Main implementation
-├── python_test/          # Unit tests
-├── PYTHON_README.md     # Full documentation
-├── CONVERSION_SUMMARY.md # Conversion details
+├── simpledb/            # Main implementation
+├── tests/               # Unit tests
+├── README.md            # Full documentation
 ├── QUICK_START.md       # This file
-└── src/                 # Original Java source (reference)
 ```
 
 ## File Size Reference
@@ -182,9 +181,9 @@ Join-Algorithms/
 ## Support
 
 For issues or questions:
-1. Check PYTHON_README.md for detailed documentation
-2. Review the test cases in python_test/test_basic.py
-3. Examine the code comments in python_src/
+1. Check README.md for detailed documentation
+2. Review the test cases in tests/
+3. Examine the code comments in simpledb/
 
 ---
 
