@@ -1,0 +1,6 @@
+# Python requirements
+# No external dependencies - uses only Python standard library
+
+# For development and testing:
+pytest>=6.0
+pytest-cov>=2.10
