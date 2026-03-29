@@ -19,12 +19,14 @@ simpledb/
 ├── parser/                 # Query parsing
 ├── executor/               # Query execution engine
     ├── projection/         # Column projection
-    └── join/               # Join algorithm implementations
+    ├── join/               # Join algorithm implementations
+    └── limit/              # Limit operator imlementing LIMIT clause
 └── run/                    # Demo application
 
 tests/                      # Unit tests
 ├── test_main/              # unit tests of database manager
-└── test_parser/            # unit tests for query parsing
+├── test_parser/            # unit tests for query parsing
+└── test_executor/          # unit tests for query executor
 ```
 
 ## Key Features

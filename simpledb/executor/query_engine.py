@@ -7,6 +7,7 @@ import readline  # just by importing improves input() to support editing and his
 from simpledb.main.database_manager import DatabaseManager
 from simpledb.parser.query import Query
 from simpledb.executor.projection.projection import Projection
+from simpledb.executor.limit.limit import Limit
 from simpledb.executor.join.nested_loop_join import NestedLoopJoin
 
 
@@ -79,6 +80,10 @@ class QueryEngine:
             if query.get_projected_columns():
                 result_iterator = Projection(result_iterator, *query.get_projected_columns())
             
+            # Add limit operator if needed
+            if query.has_limit_clause():
+                result_iterator = Limit(result_iterator, query.get_limit())
+
             # Execute and display results
             row_count = 0
             print()
