@@ -20,6 +20,7 @@ simpledb/
 ├── executor/               # Query execution engine
     ├── projection/         # Column projection
     ├── join/               # Join algorithm implementations
+    ├── filter/             # Filter operator implementing WHERE clause
     └── limit/              # Limit operator imlementing LIMIT clause
 └── run/                    # Demo application
 
