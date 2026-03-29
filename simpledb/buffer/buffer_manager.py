@@ -129,3 +129,13 @@ class BufferManager:
     def get_page_accesses(self) -> int:
         """Get the number of page accesses."""
         return self.page_accesses
+
+    def print_stats(self):
+        bstatus = f"** Buffer Manager ({self.get_cache_hits()} cache hits, {self.get_page_accesses()} page accesses, {self.get_num_pinned()} pinned pages):\n" 
+        for frame in self.frames:
+            bstatus += f" {frame.get_page_id()}"
+            if frame.is_dirty():
+                bstatus += "*"
+            if frame.is_pinned():
+                bstatus += f"^{frame.pinned}"
+        print(bstatus)

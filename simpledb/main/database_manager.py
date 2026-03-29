@@ -7,7 +7,7 @@ import os
 from simpledb.main.database_constants import DatabaseConstants
 from simpledb.disk.disk_manager import DiskManager
 from simpledb.buffer.buffer_manager import BufferManager, BufferAccessException
-from simpledb.buffer.replacement.mru_replacer import MruReplacer
+from simpledb.buffer.replacement.random_replacer import RandomReplacer
 from simpledb.main.catalog.catalog import Catalog
 from simpledb.heap.heap_file import HeapFile
 from simpledb.main.catalog.tuple_desc import TupleDesc
@@ -45,10 +45,10 @@ class DatabaseManager:
                 # Initialize DiskManager
                 self.dm = DiskManager(DatabaseConstants.DEFAULT_DB_NAME, 1)
 
-                # Initialize BufferManager with MRU replacer
+                # Initialize BufferManager with Random replacer
                 self.bm = BufferManager(
                     DatabaseConstants.MAX_BUFFER_FRAMES,
-                    MruReplacer(),
+                    RandomReplacer(),
                     self.dm
                 )
 
