@@ -1,8 +1,5 @@
-"""
-QUICK START GUIDE - Python SimpleDB Database
-"""
-
 # Quick Start Guide
+QUICK START GUIDE - Python SimpleDB Database from University of Sydney
 
 ## Step 1: Verify Installation
 
@@ -34,9 +31,16 @@ SQL>
 
 ## Step 4: Try Sample Queries
 
-### Create tables and insert data - The demo automatically sets up:
+### Create tables and insert data
+This is done in the program code. The demo automatically sets up:
 - `students` table with columns: name (STRING), age (INTEGER), class (STRING), male (BOOLEAN)
 - `tutors` table with columns: id (STRING), tutor (STRING)
+
+You can check the currently loaded schema using the 'schema' or 'tables' commands:
+```bash
+SimpleDB Query Engine
+SQL> schema
+```
 
 ### Sample Queries:
 
@@ -55,9 +59,9 @@ SELECT name, class FROM Students;
 SELECT name, tutor FROM Students JOIN Tutors ON class = id;
 ```
 
-**4. Full command with semicolon:**
+**4. Full SQL support including join, filtering, ordering and limit:**
 ```sql
-SELECT name, age, class FROM Students;
+SELECT name, age, class FROM Students JOIN Tutors ON class = id WHERE tutor=Scott ORDER BY name LIMIT 2;
 ```
 
 ## Running Tests
@@ -116,12 +120,16 @@ with table.inserter() as inserter:
 # Read data
 for tuple_obj in table.iterator():
     print(tuple_obj)
+
+#SQL usage
+QueryEngine(dbms).run()
 ```
 
 ## Common Issues
 
 ### Issue: Module not found
 **Solution**: Make sure you're running from the correct directory
+and that you run the code as module using the '-m' option. 
 ```bash
 cd "/path/to/SimpleDB"
 python3 -B -m simpledb.run.demo
@@ -132,6 +140,7 @@ python3 -B -m simpledb.run.demo
 ```sql
 SELECT col1, col2 FROM table [JOIN table2 ON col1 = col2];
 ```
+where col1 must refer to an attribute in table, and col2 to table2.
 
 ### Issue: Table/Column not found
 **Solution**: 
@@ -141,12 +150,21 @@ SELECT col1, col2 FROM table [JOIN table2 ON col1 = col2];
 ## Performance Tips
 
 1. **Buffer Pool**: Configured with 32 frames - adjust in `database_constants.py`
-2. **Block Size**: For NestedLoopJoin, adjust block frames:
-   ```python
-   NestedLoopJoin(left, right, condition, block_size=4)
-   ```
-3. **Join Algorithm**: Choose based on data size:
-   - Small tables: NestedLoopJoin
+  or using the runtime parameters of demo.py
+
+simpledb.run.demo can be started with two optional parameters:
+
+```bash
+python -B -m simpledb.run.demo -h   
+usage: demo.py [-h] [-d FILNAME] [-b SIZE]
+
+SimpleDB demo
+
+options:
+  -h, --help            show this help message and exit
+  -d, --dbfile FILNAME  name of database file
+  -b, --buffer SIZE     number of buffer frames
+```
 
 ## Project Structure
 
@@ -157,34 +175,6 @@ Join-Algorithms/
 ├── README.md            # Full documentation
 ├── QUICK_START.md       # This file
 ```
-
-## File Size Reference
-
-- Database file grows as data is inserted
-- Page size: 1024 bytes (fixed)
-- Max buffer frames: 32
-
-## Next Steps
-
-1. **Learn the architecture**: Read PYTHON_README.md
-2. **Understand the conversion**: Read CONVERSION_SUMMARY.md
-3. **Study the code**: Start with demo.py
-4. **Experiment**: Try different join queries
-5. **Extend**: Add new features or algorithms
-
-## Documentation
-
-- **API Documentation**: Docstrings in each Python file
-- **Type Hints**: All functions have Python type annotations
-- **Examples**: See demo.py for usage patterns
-
-## Support
-
-For issues or questions:
-1. Check README.md for detailed documentation
-2. Review the test cases in tests/
-3. Examine the code comments in simpledb/
-
 ---
 
 **Happy database exploring!**

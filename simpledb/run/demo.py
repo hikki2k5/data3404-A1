@@ -32,7 +32,7 @@ def insert_rows(table, rows):
 
 def main():
     """Process command-line argument"""
-    argparser = argparse.ArgumentParser(description="SydDB demo")
+    argparser = argparse.ArgumentParser(description="SimpleDB demo")
     argparser.add_argument("-d", "--dbfile", metavar="FILNAME", help="name of database file",   default=DatabaseConstants.DEFAULT_DB_NAME,   type=str)
     argparser.add_argument("-b", "--buffer", metavar="SIZE", help="number of buffer frames", default=DatabaseConstants.MAX_BUFFER_FRAMES, type=int)
     args = argparser.parse_args()
