@@ -9,13 +9,15 @@ Python 3.7+ is required. Check your installation:
 python3 --version
 ```
 
-## Step 2: Navigate to Project
+## Step 2: Navigate to the Assignment code
+This is the same directory, where this QUICK_START.md file resides.
 
 ```bash
-cd "SimpleDB"
+cd "SimpleDB-Assignment"
 ```
 
 ## Step 3: Run the Demo
+This is done directly from the root directory of the Assignment folder:
 
 ```bash
 python3 -B -m simpledb.run.demo
@@ -66,10 +68,9 @@ SELECT name, age, class FROM Students JOIN Tutors ON class = id WHERE tutor=Scot
 
 ## Running Tests
 
-In the `tests/` directory:
+Directly from the root directory of the `SimpleDB-Assignment` folder:
 
 ```bash
-cd tests
 python3 -B -m unittest discover -s tests -p "test_*.py" -v 2>&1
 ```
 

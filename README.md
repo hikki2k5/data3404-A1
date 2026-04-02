@@ -56,10 +56,11 @@ tests/                      # Unit tests
 No external dependencies are required - uses only Python standard library.
 
 ```bash
-cd SimpleDB
+cd SimpleDB-Assignment
 ```
 
 ## Running the Demo
+This is done directly from the root directory of the cloned assignment repo:
 
 ```bash
 python3 -B -m simpledb.run.demo
