@@ -2,7 +2,6 @@
 Database Components are initialised and stored in this class.
 """
 
-import tempfile
 import os
 from simpledb.main.database_constants import DatabaseConstants
 from simpledb.disk.disk_manager import DiskManager
@@ -11,6 +10,8 @@ from simpledb.buffer.replacement.random_replacer import RandomReplacer
 from simpledb.main.catalog.catalog import Catalog
 from simpledb.heap.heap_file import HeapFile
 from simpledb.main.catalog.tuple_desc import TupleDesc
+from simpledb.index.hash_index import HashIndex
+from simpledb.heap.tuple import Tuple
 
 
 class ComponentsNotInitialisedError(Exception):
@@ -90,9 +91,9 @@ class DatabaseManager:
 
         try:
             if self.dm:
-                self.dm.reset()
+                self.dm.db_file.close()
         except Exception as e:
-            print(f"Error resetting disk manager: {e}")
+            print(f"Error closing disk manager: {e}")
 
         # Clean up temporary file
         if self._temp_file and os.path.exists(self._temp_file.name):
@@ -104,8 +105,40 @@ class DatabaseManager:
     def get_heap_file(self, name: str) -> HeapFile:
         """Get a heap file by name."""
         schema = self.catalog.read_schema(name)
-        return HeapFile(schema, name, self.bm)
+        if schema is None:
+            raise KeyError(f"Unknown table '{name}'")
+        relation_name = self.catalog.find_name_of_schema(schema)
+        return HeapFile(
+            schema,
+            relation_name,
+            self.bm,
+            insert_callback=lambda tuple_obj: self._update_indexes_for_insert(relation_name, tuple_obj),
+        )
 
     def get_temp_heap_file(self, schema: TupleDesc) -> HeapFile:
         """Get a temporary heap file with the given schema."""
         return HeapFile(schema, buffer_manager=self.bm)
+
+    def create_hash_index(self, table_name: str, column_name: str, index_name: str = None, bucket_count: int = 8) -> HashIndex:
+        """Create, populate, and register a hash index for a table column."""
+        schema = self.catalog.read_schema(table_name)
+        if schema is None:
+            raise KeyError(f"Unknown table '{table_name}'")
+        if not schema.has_field(column_name):
+            raise KeyError(f"Unknown column '{column_name}' for table '{table_name}'")
+
+        resolved_name = index_name or f"{table_name}_{column_name}_hash_idx"
+        index = HashIndex(resolved_name, table_name, column_name, schema, bucket_count)
+        table = self.get_heap_file(table_name)
+        index.build_from_table(table)
+        self.catalog.add_index(table_name, column_name, index)
+        return index
+
+    def get_index(self, table_name: str, column_name: str):
+        """Fetch a registered index by table and column."""
+        return self.catalog.get_index(table_name, column_name)
+
+    def _update_indexes_for_insert(self, table_name: str, tuple_obj: Tuple) -> None:
+        """Update all indexes registered on a table after an insert succeeds."""
+        for index in self.catalog.get_indexes(table_name).values():
+            index.insert(tuple_obj)

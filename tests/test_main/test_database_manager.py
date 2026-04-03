@@ -15,11 +15,14 @@ class TestDatabaseManager(unittest.TestCase):
 
     def setUp(self):
         """Set up test database."""
-        self.db_name = tempfile.NamedTemporaryFile(suffix='.db').name
+        temp_file = tempfile.NamedTemporaryFile(suffix='.db', delete=False)
+        self.db_name = temp_file.name
+        temp_file.close()
         self.dbms = DatabaseManager(self.db_name)
 
     def tearDown(self):
         """Clean up test database."""
+        self.dbms.close()
         if os.path.exists(self.db_name):
             os.remove(self.db_name)
 

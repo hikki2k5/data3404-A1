@@ -4,3 +4,4 @@
 # For development and testing:
 pytest>=6.0
 pytest-cov>=2.10
+coverage>=7.0

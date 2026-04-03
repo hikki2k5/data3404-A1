@@ -15,12 +15,19 @@ import random
 class HeapFile:
     """Represents a collection of unordered pages containing tuples."""
 
-    def __init__(self, schema: TupleDesc, relation_name: str = None, buffer_manager: BufferManager = None):
+    def __init__(
+        self,
+        schema: TupleDesc,
+        relation_name: str = None,
+        buffer_manager: BufferManager = None,
+        insert_callback=None,
+    ):
         """Initialize a HeapFile."""
         self.schema = schema
         self.buffer = buffer_manager
         self.relation_name = relation_name
         self.first_page_id = None
+        self.insert_callback = insert_callback
         
         if relation_name is not None and buffer_manager is not None:
             # Persistent HeapFile
@@ -49,7 +56,7 @@ class HeapFile:
     def inserter(self):
         """Get an inserter for this file."""
         from simpledb.access.write.heap_file_inserter import HeapFileInserter
-        return HeapFileInserter(self.buffer, self.first_page_id, self.schema)
+        return HeapFileInserter(self.buffer, self.first_page_id, self.schema, self.insert_callback)
 
     def get_schema(self) -> TupleDesc:
         """Get the schema of this heap file."""
@@ -68,3 +75,14 @@ class HeapFile:
     def print_stats(self) -> str:
         """Print statistics about this heap file."""
         return f"Relation {self.relation_name}, firstPageId {self.first_page_id.get()}, schema {hash(self.schema)}"
+
+    def count_tuples(self) -> int:
+        """Count tuples currently stored in this heap file."""
+        iterator = self.iterator()
+        count = 0
+        try:
+            for _ in iterator:
+                count += 1
+        finally:
+            iterator.close()
+        return count

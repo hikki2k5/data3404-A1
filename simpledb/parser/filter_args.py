@@ -62,7 +62,7 @@ class FilterArgs:
         return f"{self.column} {self.comp.get_symbol()} {self.value}"
 
     # The pattern that represents the format of a single where clause (<column> <comparison_operator> <value>)
-    WHERE_CLAUSE_PATTERN = re.compile(r"(\w+)\s*(>=|<>|<=|=|>|<|!=)\s*([\w\.]+)")
+    WHERE_CLAUSE_PATTERN = re.compile(r"(\w+)\s*(>=|<>|<=|=|>|<|!=)\s*('(?:[^']*)'|\"(?:[^\"]*)\"|[\w\.]+)")
 
     @staticmethod
     def parse(command: str):# -> List[FilterArgs]:
@@ -80,6 +80,8 @@ class FilterArgs:
             column = matcher.group(1)
             operator = matcher.group(2)
             value = matcher.group(3)
+            if (value.startswith("'") and value.endswith("'")) or (value.startswith('"') and value.endswith('"')):
+                value = value[1:-1]
             comparison = Comparison.find(operator)
             if comparison is None:
                 raise ValueError(f"Unknown comparison operator: {operator}")

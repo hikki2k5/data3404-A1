@@ -13,11 +13,12 @@ from simpledb.heap.heap_page import HeapPage
 class HeapFileInserter(AccessInserter):
     """Inserter for writing tuples to a HeapFile."""
 
-    def __init__(self, buffer_manager: BufferManager, first_page_id: PageId, schema: TupleDesc):
+    def __init__(self, buffer_manager: BufferManager, first_page_id: PageId, schema: TupleDesc, insert_callback=None):
         """Initialize the HeapFileInserter."""
         self.buffer_manager = buffer_manager
         self.schema = schema
         self.current_page_id = PageId(first_page_id.get())
+        self.insert_callback = insert_callback
 
     def get_schema(self) -> TupleDesc:
         """Get the schema of tuples."""
@@ -33,6 +34,8 @@ class HeapFileInserter(AccessInserter):
             
             if heap_page.insert_record(tuple_obj):
                 self.buffer_manager.unpin(self.current_page_id, True)
+                if self.insert_callback is not None:
+                    self.insert_callback(tuple_obj)
                 return
             
             next_page_id = heap_page.get_next_page()

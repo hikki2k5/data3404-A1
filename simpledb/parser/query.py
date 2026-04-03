@@ -124,10 +124,10 @@ class Query:
     @staticmethod
     def generate_query(command: str):
         """Parse a query from a string."""
-        pattern = r"SELECT ([\w, ]+)\s+"\
+        pattern = r"SELECT (\*|[\w, ]+)\s+"\
                   r"FROM (\w+)"\
                   r"(\s+JOIN (\w+)\s+ON (\w+)\s*=\s*(\w+))?"\
-                  r"(\s+WHERE ((\w+\s*(>=|<>|!=|<=|=|>|<)\s*[\w\.]+)(\s+AND\s+\w+\s*(>=|<>|!=|<=|=|>|<)\s*[\w\.]+)*))?"\
+                  r"(\s+WHERE ((\w+\s*(>=|<>|!=|<=|=|>|<)\s*(?:'[^']*'|\"[^\"]*\"|[\w\.]+))(\s+AND\s+\w+\s*(>=|<>|!=|<=|=|>|<)\s*(?:'[^']*'|\"[^\"]*\"|[\w\.]+))*))?"\
                   r"(\s+ORDER BY (\w+(,\s*\w+)*))?"\
                   r"(\s+LIMIT (\d+))?"\
                   r";?"
@@ -143,7 +143,8 @@ class Query:
             return None
         
         table_name = match.group(2)
-        projected_columns = [col.strip().lower() for col in match.group(1).split(',')]
+        projection_group = match.group(1).strip()
+        projected_columns = [] if projection_group == "*" else [col.strip().lower() for col in projection_group.split(',')]
         
         # parse Join clause
         join_args = None
