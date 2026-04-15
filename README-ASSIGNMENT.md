@@ -35,31 +35,42 @@ The extension adds:
 Install development dependencies if needed:
 
 ```powershell
-py -m pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
 The database itself only uses the Python standard library. The packages in `requirements.txt` are for testing and coverage.
+After the upstream update, `requirements.txt` also includes `pyreadline3`, which improves readline support on Windows for the interactive query engine.
 
 ## Run Instructions
 
 ### Run all unit tests
 
 ```powershell
-py -m unittest discover -s tests -p "test*.py"
+python3 -m unittest discover -s tests -p "test*.py"
 ```
 
 ### Run coverage
 
 ```powershell
-py -m coverage run -m unittest
-py -m coverage report -m
+python3 -m coverage run -m unittest
+python3 -m coverage report -m
 ```
 
 ### Run the integrated hash index demo
 
 ```powershell
-py -m simpledb.run.hash_index_demo
+python3 -m simpledb.run.hash_index_demo
 ```
+
+### Optional: use the new AuctionDB performance files
+
+The pulled upstream update added:
+- `tests/performance/auctiondb.py`
+- `tests/performance/data3404_auctiondb_test.db`
+- `tests/performance/data3404_auctiondb_small.db`
+- `tests/performance/data3404_auctiondb_large.db`
+
+These can be used for larger performance experiments beyond the small built-in demo tables.
 
 The demo prints:
 - index creation and population
@@ -109,6 +120,7 @@ At the time of submission:
 - the integrated hash-index demo runs successfully
 - overall project coverage is approximately **87%**
 - coverage across the extended hash-index feature area is approximately **80%+**
+- the repository also includes the upstream storage-layer bugfix and AuctionDB performance data from the latest pull
 
 ## Included Documentation
 

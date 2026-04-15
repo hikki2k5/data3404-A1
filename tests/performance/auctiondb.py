@@ -2,9 +2,9 @@
 AuctionDB Client for the SimpleDB Database System.
 
 Execute with:
-python -B -m tests.performance.auctiondb -d tests/performance/data3404_auctiondb_test.db
+python3 -B -m tests.performance.auctiondb -d tests/performance/data3404_auctiondb_test.db
 or
-python -B -m tests.performance.auctiondb -d tests/performance/data3404_auctiondb_[SIZE].db
+python3 -B -m tests.performance.auctiondb -d tests/performance/data3404_auctiondb_[SIZE].db
 
 Careful: already on small database, join queries can run quite long...
          Always start with data3404_auctiondb_test.db first.

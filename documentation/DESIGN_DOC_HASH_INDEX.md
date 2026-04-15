@@ -52,6 +52,7 @@ The main files involved in the extension are listed below.
 ### Testing and demo
 - `tests/test_executor/test_hash_index.py`
 - `simpledb/run/hash_index_demo.py`
+- `tests/performance/auctiondb.py`
 
 ## 4. Main Design Decisions
 
@@ -168,6 +169,7 @@ I used three levels of verification.
 - run a deterministic demo script
 - print plan choice and result tuples
 - compare tuples examined for sequential scan vs index scan
+- optionally test on the larger AuctionDB example files added by the upstream update
 
 ## 9. Assumptions and Limitations
 

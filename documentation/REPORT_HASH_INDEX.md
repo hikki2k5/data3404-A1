@@ -94,7 +94,7 @@ I also ran the full existing test suite to make sure the extension did not break
 Command used:
 
 ```powershell
-py -m unittest discover -s tests -p "test*.py"
+python3 -m unittest discover -s tests -p "test*.py"
 ```
 
 Result:
@@ -106,8 +106,8 @@ Result:
 I measured coverage using:
 
 ```powershell
-py -m coverage run -m unittest
-py -m coverage report -m
+python3 -m coverage run -m unittest
+python3 -m coverage report -m
 ```
 
 Results at the time of submission:
@@ -139,6 +139,8 @@ For the example query on `Students WHERE class = 'COMP3221'`, the demo showed:
 - reduction in examined tuples: `62.50%`
 
 This is not a full benchmark, but it is a useful logical evaluation showing that the index is actually being used and is reducing work for the intended query type.
+
+After pulling the latest upstream update, the repository also includes `tests/performance/auctiondb.py` and three AuctionDB database files. These give an optional way to do larger-scale performance experiments beyond the built-in demo tables. They were not required for correctness, but they are useful for stronger evaluation if needed.
 
 ## 5. What Worked Well
 
@@ -228,4 +230,4 @@ In conclusion, this extension successfully adds an integrated hash index to Simp
 - preserves correctness
 - includes comprehensive tests and a runnable evaluation demo
 
-Overall, I believe the extension meets the expectations of the “Very High” difficulty option while staying clean, modular, and consistent with the existing SimpleDB project.
+Overall, I believe the extension meets the expectations of the "Very High" difficulty option while staying clean, modular, and consistent with the existing SimpleDB project.

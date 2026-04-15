@@ -1,138 +1,99 @@
 # SimpleDB - Python Database Engine
 
-This is the source code of a simple Python database engine for teaching DATA3404 
-at the University of Sydney.
+This repository contains the Python version of the SimpleDB teaching database used in DATA3404 at the University of Sydney.
 
 ## Project Structure
 
-```
+```text
 simpledb/
-├── main/                   # Global constants and configuration
-    └── catalog/            # Catalog and Type representations
-├── heap/                   # Heap file management and tuple representation
-├── disk/                   # Disk management and page I/O
-├── buffer/                 # Buffer pool management
-├── access/                 # Record access (read/write iterators)
-├── parser/                 # Query parsing
-├── executor/               # Query execution engine
-    ├── projection/         # Column projection
-    ├── join/               # Join algorithm implementations
-    ├── filter/             # Filter operator implementing WHERE clause
-    ├── ordering/           # OrderBy operator implementing ORDER BY clause
-    └── limit/              # Limit operator imlementing LIMIT clause
-└── run/                    # Demo application
+|-- main/                   # Global constants and configuration
+|   `-- catalog/            # Catalog and type representations
+|-- heap/                   # Heap file management and tuple representation
+|-- disk/                   # Disk management and page I/O
+|-- buffer/                 # Buffer pool management
+|-- access/                 # Record access (read/write iterators)
+|-- parser/                 # Query parsing
+|-- executor/               # Query execution engine
+|   |-- projection/         # Projection operator
+|   |-- join/               # Join implementations
+|   |-- filter/             # WHERE filtering
+|   |-- ordering/           # ORDER BY support
+|   `-- limit/              # LIMIT support
+|-- index/                  # Integrated hash index extension
+`-- run/                    # Demo programs
 
-tests/                      # Unit tests
-├── test_main/              # unit tests of database manager
-├── test_buffer/            # unit tests for the buffer manager
-├── test_parser/            # unit tests for query parsing
-└── test_executor/          # unit tests for query executor
+tests/
+|-- test_main/              # Database manager tests
+|-- test_buffer/            # Buffer manager tests
+|-- test_parser/            # Parser tests
+|-- test_executor/          # Executor and extension tests
+`-- performance/            # AuctionDB performance data and helper script
 ```
 
 ## Key Features
 
-- **Query Execution**:
-  - Pipelined query execution
-  - Separate SQL query parser, planner and executor stages
-  - NO query optimiser; only bare-bone parser and planner
-  
-- **Join Algorithms**:
-  - Nested-Loops Join
-    Current restriction: Join between just two relations
-
-- **Database Management**:
-  - Buffer pool with Random replacement policy
-  - Row-store with slotted page architecture
-  - Disk manager with file I/O, storing all tables within a single database file
-  - Catalog for schema management (only table names made persistent, other schema in code)
-
-- **Type System**:
-  - Support for STRING, INTEGER, DOUBLE, and BOOLEAN types
-  - Type-safe tuple operations
-  - Schema validation
+- Pipelined query execution
+- Separate parser, planner, and executor stages
+- Heap-file storage with slotted pages
+- Buffer manager with random replacement
+- Support for `STRING`, `INTEGER`, `DOUBLE`, and `BOOLEAN`
+- Integrated hash-index extension for equality predicates
 
 ## Installation
 
-No external dependencies are required - uses only Python standard library.
+The core database mainly uses the Python standard library. A few development and runtime helper packages are listed in `requirements.txt`.
 
-```bash
-cd SimpleDB-Assignment
+```powershell
+python3 -m pip install -r requirements.txt
 ```
 
 ## Running the Demo
-This is done directly from the root directory of the cloned assignment repo:
 
-```bash
-python3 -B -m simpledb.run.demo
+From the repository root:
+
+```powershell
+python3 -m simpledb.run.demo
 ```
 
-This starts an interactive query engine where you can:
-- inspect the schema (schema command)
-- Execute SELECT and JOIN queries
-
+This starts the interactive query engine.
 
 Example queries:
+
 ```sql
-SELECT name, age   FROM Students;
+SELECT name, age FROM Students;
 SELECT name, tutor FROM Students JOIN Tutors ON class = id;
 ```
 
 ## Running Unit Tests
 
-```bash
-python3 -B -m unittest discover -s tests -p "test_*.py" -v 2>&1
+```powershell
+python3 -m unittest discover -s tests -p "test*.py"
 ```
 
-## Implementation Notes
+## Running Coverage
 
-### Key Classes
-
-- `Tuple`: Represents a row in the database
-- `TupleDesc`: Schema definition
-- `Page/DataPage`: Fixed-size disk pages (1KB)
-- `DiskManager`: Handles disk I/O
-- `BufferManager`: Manages buffer pool
-- `HeapFile`: Collection of data pages
-- `AccessIterator`: Abstract iterator for table access
-- Join algorithms: NestedLoopJoin
-
-## Architecture
-
-The system follows a layered architecture:
-
-```
-Query Engine
-    ↓
-Query Parser
-    ↓  
-Query Planner
-    ↓  
-Join Operators + Projection
-    ↓
-Access Layer (Iterators)
-    ↓
-Buffer Manager
-    ↓
-Disk Manager
+```powershell
+python3 -m coverage run -m unittest
+python3 -m coverage report -m
 ```
 
-## Performance Considerations
+## Performance Evaluation Support
 
-- Buffer pool currently uses a random replacement policy
-- Page size: 1024 bytes
-- Maximum buffer frames: 32
+After the recent upstream update, the repository also includes AuctionDB example databases and a helper script for larger performance experiments:
+
+- `tests/performance/auctiondb.py`
+- `tests/performance/data3404_auctiondb_test.db`
+- `tests/performance/data3404_auctiondb_small.db`
+- `tests/performance/data3404_auctiondb_large.db`
+
+These are useful if you want to test behaviour beyond the small built-in demo data.
 
 ## Acknowledgements
-SimpleDB is based on the PASTA JavaDB from INFO3404/DATA3404 which was mainly
-written by Scott Sidwell, Chris Natoli, and Bryn Jeffries.
+
+SimpleDB is based on the PASTA JavaDB project from INFO3404/DATA3404, mainly written by Scott Sidwell, Chris Natoli, and Bryn Jeffries.
 
 ## References
 
-- Original Java Project: PASTA/JavaDB (University of Sydney, DATA3404/INFO3404)
-- O'Reilly "Database Internals" for disk management concepts
-- Ramakrishnan/Gehrke: "Database Management Systems"
-
----
-
-**Note**: This is an educational implementation whose complexity is purposely simplified. 
-For production use, consider established databases like PostgreSQL, MySQL, or SQLite.
+- PASTA / JavaDB teaching project
+- O'Reilly, *Database Internals*
+- Ramakrishnan and Gehrke, *Database Management Systems*
