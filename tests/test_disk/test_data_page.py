@@ -71,6 +71,16 @@ class TestDataPage(unittest.TestCase):
         self.assertGreater(max_records, 0)
         self.assertLessEqual(max_records, DatabaseConstants.MAX_SLOT_ENTRIES)
 
+    def test_insert_full_page(self):
+        """Test inserting multiple records till page is full."""
+        page = DataPage()
+        page.initialise("test_table")
+        expected_num_tuples = (DatabaseConstants.PAGE_SIZE - DatabaseConstants.PAGE_HEADER_SIZE) // (self.schema.get_max_tuple_length() + DatabaseConstants.SLOT_ENTRY_SIZE) 
+        for i in range(expected_num_tuples):
+	        self.assertTrue(page.insert_record(self.tuple1))
+        self.assertFalse(page.insert_record(self.tuple2))
+        self.assertEqual(page.get_record_count(), expected_num_tuples)
+
 
 if __name__ == '__main__':
     unittest.main()
