@@ -71,3 +71,4 @@ ipython_config.py
 # pytype static type analyzer
 .pytype/
 
+data3404_database.db
