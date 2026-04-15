@@ -25,13 +25,13 @@ class DataPage(SlottedPage):
     def insert_record(self, record: Tuple) -> bool:
         """Insert a (fixed size) record into the next available slot."""
         record_size = record.get_schema().get_max_tuple_length()
-        slot_no = self.allocate_slot(record_size)
-        if slot_no == -1:
-            return False
-
-        offset = self.get_slot_offset(slot_no)
-        self._write(record, offset)
-        return True
+        try:
+            slot_no = self.allocate_slot(record_size)
+            offset = self.get_slot_offset(slot_no)
+            self._write(record, offset)
+            return True
+        except OverflowError:
+            return False  # indicates failure to insert
 
     def get_record(self, slot_no: int, record: Tuple) -> None:
         """Read the record at position slot_no from the page."""

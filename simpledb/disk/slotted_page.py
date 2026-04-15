@@ -124,8 +124,9 @@ class SlottedPage(Page):
 
     def allocate_slot(self, record_size: int) -> int:
         """Allocate a slot for a record of the given size."""
+        free_start= self.get_free_start()
         free_end = self.get_free_end()
-        if free_end - record_size - DatabaseConstants.SLOT_ENTRY_SIZE < self.get_free_start():
+        if free_end - record_size - DatabaseConstants.SLOT_ENTRY_SIZE < free_start:
             raise OverflowError("Not enough free space")
 
         free_slot = self.find_free_slot()
@@ -133,6 +134,7 @@ class SlottedPage(Page):
             # Need to add a new slot
             free_slot = self.get_num_slots()
             self.set_num_slots(free_slot + 1)
+            self.set_free_start(free_start+DatabaseConstants.SLOT_ENTRY_SIZE)
 
         offset = free_end - record_size
         self.set_slot_offset(free_slot, offset)
