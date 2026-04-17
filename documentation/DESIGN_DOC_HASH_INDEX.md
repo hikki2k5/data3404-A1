@@ -53,6 +53,8 @@ The main files involved in the extension are listed below.
 - `tests/test_executor/test_hash_index.py`
 - `simpledb/run/hash_index_demo.py`
 - `tests/performance/auctiondb.py`
+- `tests/performance/import_csv.py`
+- `tests/performance/evaluate_hash_index.py`
 
 ## 4. Main Design Decisions
 
@@ -170,6 +172,9 @@ I used three levels of verification.
 - print plan choice and result tuples
 - compare tuples examined for sequential scan vs index scan
 - optionally test on the larger AuctionDB example files added by the upstream update
+- import AuctionDB tables with `tests/performance/import_csv.py` and create hash indexes during import for Option 4 evaluation
+- reopen indexed AuctionDB databases with `tests/performance/auctiondb.py --rebuild-hash-indexes` so the planner can rebuild the session-local hash indexes
+- collect repeated benchmark metrics using `tests/performance/evaluate_hash_index.py`
 
 ## 9. Assumptions and Limitations
 

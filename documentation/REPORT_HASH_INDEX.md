@@ -99,7 +99,7 @@ python3 -m unittest discover -s tests -p "test*.py"
 
 Result:
 - all tests passed
-- total tests run: `90`
+- total tests run: `96`
 
 ## 4.2 Coverage
 
@@ -141,6 +141,31 @@ For the example query on `Students WHERE class = 'COMP3221'`, the demo showed:
 This is not a full benchmark, but it is a useful logical evaluation showing that the index is actually being used and is reducing work for the intended query type.
 
 After pulling the latest upstream update, the repository also includes `tests/performance/auctiondb.py` and three AuctionDB database files. These give an optional way to do larger-scale performance experiments beyond the built-in demo tables. They were not required for correctness, but they are useful for stronger evaluation if needed.
+
+To support Option 4 more directly, I also adapted `tests/performance/import_csv.py` so it can create integrated hash indexes immediately after importing each table. This means an AuctionDB evaluation database can now be recreated using the extended implementation rather than only using the prebuilt heap-file databases.
+
+Because the current catalog and index metadata are session-local, I also updated `tests/performance/auctiondb.py` so it can rebuild the default AuctionDB hash indexes when reopening an indexed evaluation database. In addition, I added `tests/performance/evaluate_hash_index.py` to automate repeated benchmark runs and report average execution time, page accesses, buffer hits, and tuples examined.
+
+### 4.4 AuctionDB indexed evaluation results
+
+I created an indexed AuctionDB database using the adapted CSV importer and then evaluated equality queries both:
+- with the default hash indexes rebuilt for the current session
+- without rebuilding them, which forces the same queries to use sequential scan
+
+Each query was executed three times and the average values were recorded.
+
+| Query | Plan | Avg time (s) | Avg page accesses | Avg buffer hits | Avg tuples examined |
+|---|---|---:|---:|---:|---:|
+| `SELECT * FROM Regions WHERE rid = 3;` | HASH INDEX SCAN | 0.0002 | 1 | 1 | 1 |
+| `SELECT * FROM Regions WHERE rid = 3;` | SEQ SCAN | 0.0028 | 5 | 2 | 62 |
+| `SELECT * FROM Categories WHERE cid = 2;` | HASH INDEX SCAN | 0.0001 | 1 | 1 | 1 |
+| `SELECT * FROM Categories WHERE cid = 2;` | SEQ SCAN | 0.0005 | 3 | 1 | 20 |
+| `SELECT * FROM Items WHERE category = 5;` | HASH INDEX SCAN | 0.0008 | 1 | 1 | 28 |
+| `SELECT * FROM Items WHERE category = 5;` | SEQ SCAN | 0.0753 | 249 | 2.3333 | 989 |
+| `SELECT * FROM Bids WHERE item_id = 100;` | HASH INDEX SCAN | 0.0001 | 1 | 1 | 6 |
+| `SELECT * FROM Bids WHERE item_id = 100;` | SEQ SCAN | 0.0407 | 107 | 20.6667 | 1000 |
+
+These results are consistent with the purpose of a hash index. For exact-match predicates on indexed columns, the indexed execution path reduces the number of tuples examined very sharply, and for the larger tables it also reduces logical work measured through page accesses and execution time. The `Items WHERE category = 5` query gives the clearest example, where the indexed execution examined only 28 tuples compared with 989 tuples under sequential scan.
 
 ## 5. What Worked Well
 
@@ -210,7 +235,7 @@ To make sure the final implementation was reliable, I:
 
 ### 8.3 Reflection on using genAI
 
-I found genAI most useful for speeding up exploration and drafting. It was less reliable for details that depend heavily on the local codebase or the execution environment. Because of that, I think genAI works best as a support tool rather than a replacement for debugging, testing, and design judgement.
+I found genAI most useful for speeding up exploration and drafting. It was less reliable for details that depend heavily on the local codebase or the execution environment and logic. Because of that, I think genAI works best as a support tool rather than a replacement for debugging, testing, and design judgement.
 
 ## 9. Future Improvements
 

@@ -1,5 +1,10 @@
 """Integrated hash index storing full tuples directly inside buckets."""
 
+# genAI acknowledgement:
+# genAI was used only for limited support during drafting and wording cleanup.
+# The index design, integrated-storage approach, collision handling choices,
+# and final tested implementation were decided and revised by the team.
+
 from __future__ import annotations
 
 import hashlib

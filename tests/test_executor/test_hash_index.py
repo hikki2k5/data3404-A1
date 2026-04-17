@@ -1,5 +1,10 @@
 """Tests for the integrated hash index and planner/executor integration."""
 
+# genAI acknowledgement:
+# genAI provided small-scale support for drafting candidate test structure.
+# The actual test coverage, edge cases, assertions, and final revisions were
+# selected, extended, and validated by the team.
+
 import os
 import tempfile
 import unittest

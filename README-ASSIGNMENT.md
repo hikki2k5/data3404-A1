@@ -69,8 +69,20 @@ The pulled upstream update added:
 - `tests/performance/data3404_auctiondb_test.db`
 - `tests/performance/data3404_auctiondb_small.db`
 - `tests/performance/data3404_auctiondb_large.db`
+- `tests/performance/import_csv.py`
+- `tests/performance/evaluate_hash_index.py`
 
 These can be used for larger performance experiments beyond the small built-in demo tables.
+For Option 4, `tests/performance/import_csv.py` was extended so imported AuctionDB tables can automatically create integrated hash indexes using `--hash-index-columns`.
+Because current index metadata is session-local, `tests/performance/auctiondb.py` also supports `--rebuild-hash-indexes` when reopening an indexed AuctionDB file.
+
+Example automated evaluation:
+
+```powershell
+python3 -B -m tests.performance.evaluate_hash_index -d data3404_auctiondb_indexed.db --rebuild-hash-indexes -r 3
+```
+
+For a sequential-scan comparison on the same imported database, run the same command without `--rebuild-hash-indexes`.
 
 The demo prints:
 - index creation and population

@@ -1,5 +1,10 @@
 """Demonstration of integrated hash-index query execution in SimpleDB."""
 
+# genAI acknowledgement:
+# genAI was used only as a minor drafting assistant for demo structure and text.
+# The demo scenarios, evaluation flow, and final output content were selected,
+# revised, and validated by the team.
+
 from __future__ import annotations
 
 import os

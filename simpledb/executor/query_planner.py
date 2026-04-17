@@ -2,6 +2,11 @@
 Query Planner - creates logical and execution plans for queries.
 """
 
+# genAI acknowledgement:
+# genAI provided light support for drafting and refactoring suggestions.
+# The final planner integration, access-path rules, fallback behaviour,
+# and debugging of hash-index usage were designed and verified by the team.
+
 from dataclasses import dataclass
 from typing import List, Any, Optional
 from simpledb.main.database_manager import DatabaseManager
