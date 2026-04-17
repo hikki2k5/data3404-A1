@@ -62,7 +62,7 @@ def main():
                       , "Items")
 
     # Create schema for table Bids
-    catalog.add_schema(TupleDesc().add_integer("bid")\
+    catalog.add_schema(TupleDesc().add_integer("bid_id")\
                                   .add_integer("user_id")\
                                   .add_integer("item_id")\
                                   .add_integer("qty")\
